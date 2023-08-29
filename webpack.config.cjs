@@ -8,9 +8,9 @@ const WebpackShellPluginNext = require('webpack-shell-plugin-next');
 
 // list of files to purge after build step
 const removeFiles = [
-  path.resolve(__dirname, 'assets', 'style.js'),
-  path.resolve(__dirname, 'assets', 'app.js.LICENSE.txt'),
-  path.resolve(__dirname, 'assets', 'style.js.LICENSE.txt'),
+  path.resolve(__dirname, 'dist', 'style.js'),
+  path.resolve(__dirname, 'dist', 'app.js.LICENSE.txt'),
+  path.resolve(__dirname, 'dist', 'style.js.LICENSE.txt'),
 ];
 
 
@@ -84,6 +84,16 @@ module.exports = {
             presets: ['@babel/preset-env'],
           },
         },
+      },
+
+      // css
+      {
+        test: /\.css$/i,
+        include: path.resolve(__dirname, 'src/css'),
+        use: [
+          { loader: MiniCssExtractPlugin.loader },
+          'css-loader',
+        ],
       },
 
     ],

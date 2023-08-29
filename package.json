@@ -2,13 +2,29 @@
   "name": "bones.io",
   "version": "1.0.0",
   "description": "dev utilities",
-  "main": "index.js",
+  "main": "src/js/app.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "go": "node src/js/app.js",
+    "watch": "export NODE_ENV=production && webpack watch --mode production",
+    "build": "export NODE_ENV=production && webpack --mode production"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlleyFord/bones.git"
+  },
+  "author": "Josh Alley <alley@alleyford.com>",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AlleyFord/bones/issues"
+  },
+  "homepage": "https://bones.io",
   "devDependencies": {
+    "@babel/core": "^7.22.11",
+    "@babel/preset-env": "^7.22.10",
+    "babel-loader": "^9.1.3",
+    "css-loader": "^6.8.1",
     "mini-css-extract-plugin": "^2.7.6",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
