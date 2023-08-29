@@ -1,0 +1,24 @@
+{
+  "lang": "en",
+  "dir": "ltr",
+  "name": "bones.io",
+  "short_name": "bones",
+  "icons": [{
+    "src": "assets/bones.png",
+    "sizes": "128x128",
+    "type": "image.png"
+  }],
+  "scope": "/",
+  "id": "http://bones.io/",
+  "start_url": "/index.html",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "black",
+  "shortcuts": [
+    {
+      "name": "Base64 encode",
+      "description": "Convert to & from Base64",
+      "url": "/#base64"
+    }
+  ]
+}
