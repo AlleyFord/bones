@@ -1,7 +1,3 @@
-import Component from './component';
-
-
-
-export default class Lazy extends Component {
+export default class Lazy {
   name = 'lazy';
 }

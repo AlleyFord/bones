@@ -58,13 +58,30 @@ export default class App {
     return this.#event.init(name);
   }
 
-  error(str) {
-    throw new Error(str);
-    return false;
-  }
-
   ready(cb) {
     if (document.readyState !== 'loading') cb();
     else document.addEventListener('DOMContentLoaded', cb);
+  }
+
+  die(...v) {
+    if (v.length) console.log(...v);
+    process.exit();
+  }
+
+  log(...v) {
+    console.log(...v);
+  }
+
+  out(...v) {
+    process.stdout.write(...v);
+  }
+
+  line(v) {
+    process.stdout.write(`${v}\n`);
+  }
+
+  error(str) {
+    throw new Error(str);
+    return false;
   }
 }
