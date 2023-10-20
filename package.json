@@ -2,7 +2,7 @@
   "name": "@alleyford/bones",
   "version": "2.0.0",
   "description": "Making javscript fun again. Ultra low dependency framework for making things",
-  "main": "src/loader.js",
+  "main": "./loader.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
