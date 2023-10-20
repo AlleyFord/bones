@@ -1,7 +1,7 @@
 {
   "name": "@alleyford/bones",
-  "version": "1.0.0",
-  "description": "Making javscript fun",
+  "version": "2.0.0",
+  "description": "Making javscript fun again. Ultra low dependency framework for making things",
   "main": "src/loader.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
