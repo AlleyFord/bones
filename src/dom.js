@@ -364,6 +364,14 @@ class DOM {
     return this;
   }
 
+  replace(v) {
+    this.apply(node => {
+      node.outerHTML = v;
+    });
+
+    return this;
+  }
+
   template(sel, vars) {
     // Example usage:
     // <template id="template">
