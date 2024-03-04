@@ -2,10 +2,10 @@ export default class Event {
   name = null;
   cs = {};
 
-  #debug = true;
+  #app;
 
-  #_(v) {
-    if (this.#debug) console.debug(v);
+  constructor(app) {
+    this.#app = app;
   }
 
   init(...name) {
@@ -18,14 +18,14 @@ export default class Event {
   }
   subscribe(cb) {
     for (const name of this.name) {
-      if (this.cs.name) {
+      if (this.cs[name]) {
         this.cs[name].push(cb);
       }
       else {
         this.cs[name] = [cb];
       }
 
-      this.#_(`event.subscribe(${name})`);
+      this.#app.debug(`event.subscribe(${name})`);
     }
 
     return this;
@@ -35,14 +35,17 @@ export default class Event {
     return this.publish(context);
   }
   publish(context) {
+    let count = 0;
+
     for (const name of this.name) {
       if (this.cs[name]) {
         this.cs[name].forEach(cb => {
-          cb.call(context);
+          cb.call(context, context);
+          count++;
         });
       }
 
-      this.#_(`event.publish(${name})`);
+      this.#app.debug(`event.publish(${name}): ${count} calls`);
     }
 
     return this;

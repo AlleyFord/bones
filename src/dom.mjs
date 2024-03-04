@@ -1,9 +1,26 @@
+const DOMHelper = {
+  sanitizeHTML: html => {
+    return html.replace(/javascript:/gi, '').replace(/[^\w-_. ]/gi, c => {
+      return `&#${c.charCodeAt(0)};`;
+    });
+  },
+
+  dashToCamel: str => {
+    return str.toLowerCase().replace(/[^a-z0-9]+(.)/g, (m, c) => {
+      return c.toUpperCase();
+    });
+  },
+
+  camelToDash: str => {
+    return str.replace(/[A-Z]/g, m => '-' + m.toLowerCase());
+  }
+}
+
+
+
 class DOM {
   nodes = [];
   firstNodes = [];
-
-  CLASS_ACTIVE = 'active';
-  CLASS_INACTIVE = 'inactive';
 
 
   constructor(expr) {
@@ -56,13 +73,13 @@ class DOM {
 
 
   activate() {
-    return this.removeClass(this.CLASS_INACTIVE).addClass(this.CLASS_ACTIVE);
+    return this.removeClass('inactive').addClass('active');
   }
   deactivate() {
-    return this.removeClass(this.CLASS_ACTIVE).addClass(this.CLASS_INACTIVE);
+    return this.removeClass('active').addClass('inactive');
   }
   isActive() {
-    return this.hasClass(this.CLASS_ACTIVE);
+    return this.hasClass('active');
   }
 
 
@@ -73,6 +90,12 @@ class DOM {
     newDOM.nodes = this.nodes;
 
     return newDOM;
+  }
+
+
+  // returns the root html element from selector
+  root() {
+    return this.nodes[0];
   }
 
 
@@ -177,7 +200,7 @@ class DOM {
   }
 
 
-  filter(expr, match_descendants) {
+  filter(expr, match_descendants = false) {
     let newDOM = this.clone();
     let nodes = [];
 
@@ -371,6 +394,180 @@ class DOM {
 
     return this;
   }
+
+  hide() {
+    this.apply(node => {
+      node.style.display = 'none';
+    });
+
+    return this;
+  }
+  show() {
+    this.apply(node => {
+      if (node.style.display === 'none') {
+        node.style.display = '';
+      }
+      else {
+        node.style.display = 'block';
+      }
+    });
+
+    return this;
+  }
+
+  remove() {
+    this.apply(node => {
+      node.remove();
+    });
+
+    return this;
+  }
+
+  focus() {
+    this.apply(node => {
+      node.focus();
+    });
+
+    return this;
+  }
+
+
+  computedStyle() {
+    return this.static(node => window.getComputedStyle(node, null));
+  }
+
+  style(k, v) {
+    return this.css(k, v);
+  }
+  css(k, v) {
+    let map = {};
+
+    if (typeof k === 'object') {
+      for (const [key, value] of Object.entries(k)) {
+        map[key] = value;
+      }
+    }
+    else if (typeof v === 'undefined') {
+      return this.static(node => {
+        return node.getAttribute(k);
+      });
+    }
+    else {
+      map[k] = v;
+    }
+
+    this.apply(node => {
+      for (const [key, value] of Object.entries(map)) {
+        node.style[DOMHelper.camelToDash(key)] = value;
+      }
+    });
+
+    return this;
+  }
+
+
+  /*
+    size calculations
+  */
+  width() {
+    return this.static(node => {
+      const cs = window.getComputedStyle(node, null);
+
+      return node.clientWidth
+        - parseInt(cs.getPropertyValue('padding-left'))
+        - parseInt(cs.getPropertyValue('padding-right'))
+    });
+  }
+
+  innerWidth() {
+    return this.static(node => node.clientWidth);
+  }
+
+  fullWidth() {
+    return this.outerWidth(true);
+  }
+  outerWidth(includeMargin = false) {
+    return this.static(node => {
+      let width = node.offsetWidth;
+
+      if (includeMargin) {
+        const cs = window.getComputedStyle(node, null);
+
+        width += parseInt(cs.getPropertyValue('margin-right')) + parseInt(cs.getPropertyValue('margin-left'));
+      }
+
+      return width;
+    });
+  }
+
+  height() {
+    return this.static(node => {
+      const cs = window.getComputedStyle(node, null);
+
+      return node.clientHeight
+        - parseInt(cs.getPropertyValue('padding-top'))
+        - parseInt(cs.getPropertyValue('padding-bottom'))
+    });
+  }
+
+  innerHeight() {
+    return this.static(node => node.clientHeight);
+  }
+
+  fullHeight() {
+    return this.outerHeight(true);
+  }
+  outerHeight(includeMargin = false) {
+    return this.static(node => {
+      let height = node.offsetHeight;
+
+      if (includeMargin) {
+        const cs = window.getComputedStyle(node, null);
+
+        height += parseInt(cs.getPropertyValue('margin-top')) + parseInt(cs.getPropertyValue('margin-bottom'));
+      }
+
+      return height;
+    });
+  }
+
+  position() {
+    return this.static(node => {
+      const rect = node.getBoundingClientRect();
+
+      return {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+      }
+    });
+  }
+
+  dimensions() {
+    return this.static(node => {
+      return {
+        height: this.height(),
+        width: this.width(),
+        outerHeight: this.outerHeight(),
+        outerWidth: this.outerWidth(),
+        innerHeight: this.innerHeight(),
+        innerWidth: this.innerWidth(),
+      }
+    });
+  }
+
+  scrollTop(v) {
+    if (typeof v === 'undefined') {
+      return this.static(node => node.pageYOffset);
+    }
+
+    this.apply(node => node.pageYOffset = v);
+
+    return this;
+  }
+
+
 
   template(sel, vars) {
     // Example usage:

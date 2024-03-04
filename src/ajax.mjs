@@ -12,6 +12,7 @@ export default class Ajax {
     app.post = (...args) => this.post(...args);
     app.put = (...args) => this.put(...args);
     app.del = (...args) => this.del(...args);
+    app.isOk = (req) => this.isOk(req);
   }
 
   get(url, args) {
@@ -25,6 +26,10 @@ export default class Ajax {
   }
   del(url, args) {
     return this.request('del', url, args);
+  }
+
+  isOk(res) {
+    return res?._request?.ok === true;
   }
 
   request(method, url, args = {}) {
@@ -56,6 +61,7 @@ export default class Ajax {
       }
     }
     else {
+      headers['content-type'] = this.MIME_JSON;
       body = body ? JSON.stringify(body) : null;
     }
 
@@ -67,7 +73,14 @@ export default class Ajax {
       redirect: 'follow',
       body: body,
     })
-    .then(res => {
+    .then(async res => {
+      const request = {
+        status: res.status,
+        statusText: res.statusText,
+        ok: res.ok,
+        redirected: res.redirected,
+      };
+
       const mime = res.headers.get('content-type');
       let body = false;
 
@@ -77,11 +90,20 @@ export default class Ajax {
         || mime.indexOf(this.MIME_JS) !== -1
         || mime.indexOf(this.MIME_TXT_JS) !== -1
       )) {
-        body = res.json();
+        try {
+          body = await res.json();
+        }
+        catch(e) {
+          body = {};
+        }
+        try {
+          body._request = request;
+        }
+        catch(e) {}
       }
 
       else {
-        body = res.text();
+        body = await res.text();
       }
 
       return body;

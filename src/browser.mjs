@@ -13,4 +13,8 @@ export default class Browser {
     this.qs = new URLSearchParams(obj.search || '');
     this.hash = obj.hash || '';
   }
+
+  go(url) {
+    window.location.href = url;
+  }
 }

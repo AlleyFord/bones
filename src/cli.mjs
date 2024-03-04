@@ -1,4 +1,5 @@
-import { basename } from 'path';
+// BROKEN
+import path from 'node:path';
 
 
 
@@ -27,21 +28,21 @@ export default class Cli {
       this.app.log(this.helperText);
     }
 
-    return this.app.die(`usage: node ${basename(this.getEnvArg(1))} ${v}`);
+    return this.app.die(`usage: node ${path.basename(this.getEnvArg(1))} ${v}`);
   }
 
   async need(...keys) {
     return new Promise((resolve, reject) => {
       for (const key of keys) {
         if (this.getArg(key) === null) {
-          reject(this.errorRequired(key));
+          reject(this.#errorRequired(key));
         }
       }
       resolve(true);
     });
   }
 
-  errorRequired(key) {
+  #errorRequired(key) {
     return `${key} is required`;
   }
 
@@ -54,7 +55,7 @@ export default class Cli {
 
         this.args[k] = value;
 
-        if (type === self.REQUIRED && !value) reject(this.errorRequired(key));
+        if (type === self.REQUIRED && !value) reject(this.#errorRequired(key));
       }
 
       resolve(true);

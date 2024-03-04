@@ -1,3 +1,4 @@
+/* this needs better disambiguation with html component class */
 export default class Component {
   name = 'component';
   cs = [];
